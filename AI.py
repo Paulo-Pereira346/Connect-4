@@ -123,7 +123,7 @@ def score_position(board, piece):
 def is_terminal_node(board):
     return winning_move(board, PLAYER_PIECE) or winning_move(board, AI_PIECE) or len(get_valid_locations(board)) == 0
 
-def minimax(board, depth, maximizingPlayer):
+def minimax(board, depth, alpha, beta, maximizingPlayer):
     valid_locations = get_valid_locations(board)
     is_terminal = is_terminal_node(board)
     if depth == 0 or is_terminal:
@@ -135,7 +135,7 @@ def minimax(board, depth, maximizingPlayer):
             else:
                 return (None, 0)
         else:
-            return (None, score_positions(board, AI_PIECE))
+            return (None, score_position(board, AI_PIECE))
         
     if maximizingPlayer:
         value = -math.inf
@@ -144,10 +144,13 @@ def minimax(board, depth, maximizingPlayer):
             row = get_next_open_row(board, col)
             b_copy = board.copy()
             drop_piece(b_copy, row, col, AI_PIECE)
-            new_score = minimax(b_copy, depth-1, False)[1]
+            new_score = minimax(b_copy, depth-1, alpha, beta, False)[1]
             if new_score > value:
                 value = new_score
                 column = col
+            alpha = max(alpha, value)
+            if alpha >= beta:
+                break
         return column, value
     else:  #Minimizing player
         value = math.inf
@@ -156,10 +159,13 @@ def minimax(board, depth, maximizingPlayer):
             row = get_next_open_row(board, col)
             b_copy = board.copy()
             drop_piece(b_copy, row, col, PLAYER_PIECE)
-            new_score = minimax(b_copy, depth-1, True)[1]
+            new_score = minimax(b_copy, depth-1, alpha, beta, True)[1]
             if new_score < value:
                 value = new_score
                 column = col
+            beta = min(beta, value)
+            if alpha >= beta:
+                break
         return column, value
 
 
@@ -256,10 +262,10 @@ while not game_over:
     if turn == AI and not game_over:
         #col = random.randint(0, COLUMN_COUNT-1)    #For Easy Mode
         # col = pick_best_move(board, AI_PIECE)
-        col,minimax_score = minimax(board, 4, True)
+        col,minimax_score = minimax(board, 5, -math.inf, math.inf, True)
         
         if is_valid_location(board,col):
-            pygame.time.wait(500)
+            # pygame.time.wait(500)
             row = get_next_open_row(board,col)
             drop_piece(board,row,col,AI_PIECE)
             
