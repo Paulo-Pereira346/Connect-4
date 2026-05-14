@@ -260,9 +260,9 @@ while not game_over:
                     draw_board(board)
                     
     if turn == AI and not game_over:
-        #col = random.randint(0, COLUMN_COUNT-1)    #For Easy Mode
+        col = random.randint(0, COLUMN_COUNT-1)    #For Easy Mode
         # col = pick_best_move(board, AI_PIECE)
-        col,minimax_score = minimax(board, 5, -math.inf, math.inf, True)
+        # col,minimax_score = minimax(board, 6, -math.inf, math.inf, True)  #Reduce Tree Depth to adjust difficulty
         
         if is_valid_location(board,col):
             # pygame.time.wait(500)
