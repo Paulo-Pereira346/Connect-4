@@ -13,6 +13,12 @@ YELLOW = (255,255,0)
 ROW_COUNT = 6
 COLUMN_COUNT = 7
 
+#Difficulty
+EASY = 0
+MEDIUM = 1
+HARD = 2
+
+#Participants
 PLAYER = 0
 AI = 1
 
@@ -211,6 +217,11 @@ board = create_board()
 game_over = False
 turn = random.randint(PLAYER, AI)
 
+if len(sys.argv) > 1:
+    difficulty = int(sys.argv[1])
+else:
+    difficulty = MEDIUM
+
 pygame.init()
 
 SQUARESIZE = 100
@@ -260,9 +271,14 @@ while not game_over:
                     draw_board(board)
                     
     if turn == AI and not game_over:
-        col = random.randint(0, COLUMN_COUNT-1)    #For Easy Mode
-        # col = pick_best_move(board, AI_PIECE)
-        # col,minimax_score = minimax(board, 6, -math.inf, math.inf, True)  #Reduce Tree Depth to adjust difficulty
+        if difficulty == EASY:
+            col = random.choice(get_valid_locations(board))
+
+        elif difficulty == MEDIUM:
+            col, minimax_score = minimax(board, 2, -math.inf, math.inf, True)
+
+        elif difficulty == HARD:
+            col, minimax_score = minimax(board, 5, -math.inf, math.inf, True)
         
         if is_valid_location(board,col):
             # pygame.time.wait(500)
