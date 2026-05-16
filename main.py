@@ -52,60 +52,68 @@ buttons = {
     }
 }
 
-running = True
+pygame.init()
 
-while running:
+while True:
 
-    screen.fill(BACKGROUND)
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_caption("Connect 4")
 
-    # Title
-    title = title_font.render("CONNECT 4", True, WHITE)
-    screen.blit(title, (WIDTH//2 - title.get_width()//2, 60))
+    running = True
 
-    mouse_pos = pygame.mouse.get_pos()
+    while running:
 
-    # Draw buttons
-    for text, button in buttons.items():
+        screen.fill(BACKGROUND)
 
-        rect = button["rect"]
-        color = button["color"]
+        title = title_font.render("CONNECT 4", True, WHITE)
+        screen.blit(title, (WIDTH//2 - title.get_width()//2, 60))
 
-        # Hover effect
-        if rect.collidepoint(mouse_pos):
-            pygame.draw.rect(screen, BUTTON_HOVER, rect.inflate(10, 10), border_radius=20)
+        mouse_pos = pygame.mouse.get_pos()
 
-        pygame.draw.rect(screen, color, rect, border_radius=18)
+        for text, button in buttons.items():
 
-        text_surface = button_font.render(text, True, WHITE)
+            rect = button["rect"]
+            color = button["color"]
 
-        screen.blit(
-            text_surface,
-            (
-                rect.centerx - text_surface.get_width() // 2,
-                rect.centery - text_surface.get_height() // 2
+            if rect.collidepoint(mouse_pos):
+                pygame.draw.rect(screen, BUTTON_HOVER, rect.inflate(10, 10), border_radius=20)
+
+            pygame.draw.rect(screen, color, rect, border_radius=18)
+
+            text_surface = button_font.render(text, True, WHITE)
+
+            screen.blit(
+                text_surface,
+                (
+                    rect.centerx - text_surface.get_width() // 2,
+                    rect.centery - text_surface.get_height() // 2
+                )
             )
-        )
 
-    pygame.display.update()
+        pygame.display.update()
 
-    for event in pygame.event.get():
+        for event in pygame.event.get():
 
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN:
 
-            if buttons["PVP MODE"]["rect"].collidepoint(event.pos):
-                subprocess.run([sys.executable, "PVP.py"])
+                pygame.display.quit()
 
-            elif buttons["AI EASY"]["rect"].collidepoint(event.pos):
-                subprocess.run([sys.executable, "AI.py", "0"])
+                if buttons["PVP MODE"]["rect"].collidepoint(event.pos):
+                    subprocess.run([sys.executable, "PVP.py"])
 
-            elif buttons["AI MEDIUM"]["rect"].collidepoint(event.pos):
-                subprocess.run([sys.executable, "AI.py", "1"])
+                elif buttons["AI EASY"]["rect"].collidepoint(event.pos):
+                    subprocess.run([sys.executable, "AI.py", "0"])
 
-            elif buttons["AI HARD"]["rect"].collidepoint(event.pos):
-                subprocess.run([sys.executable, "AI.py", "2"])
+                elif buttons["AI MEDIUM"]["rect"].collidepoint(event.pos):
+                    subprocess.run([sys.executable, "AI.py", "1"])
 
-    clock.tick(60)
+                elif buttons["AI HARD"]["rect"].collidepoint(event.pos):
+                    subprocess.run([sys.executable, "AI.py", "2"])
+
+                running = False
+
+        clock.tick(60)
